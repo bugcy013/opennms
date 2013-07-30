@@ -98,7 +98,6 @@ public class TopologyUI extends UI implements CommandUpdateListener, MenuItemUpd
     private String m_headerHtml;
     private boolean m_showHeader = true;
     private OnmsHeaderProvider m_headerProvider = null;
-    private String m_userName;
     private OnmsServiceManager serviceManager;
     private VaadinApplicationContext m_applicationContext;
     private VerticesUpdateManager m_verticesUpdateManager;
@@ -338,17 +337,15 @@ public class TopologyUI extends UI implements CommandUpdateListener, MenuItemUpd
     }
 
     private void loadUserSettings(VaadinRequest request) {
-        m_userName = request.getRemoteUser();
-        m_graphContainer.setUserName(m_userName);
 
         // See if the history manager has an existing fragment stored for
         // this user. Do this before laying out the UI because the history
         // may change during layout.
-        String fragment = m_historyManager.getHistoryForUser(m_userName);
+        String fragment = m_historyManager.getHistoryForUser(m_applicationContext.getUsername());
 
         // If there was existing history, then restore that history snapshot.
         if (fragment != null) {
-            LoggerFactory.getLogger(this.getClass()).info("Restoring history for user {}: {}", m_userName, fragment);
+            LoggerFactory.getLogger(this.getClass()).info("Restoring history for user {}: {}", m_applicationContext.getUsername(), fragment);
             Page.getCurrent().setUriFragment(fragment);
         }
     }
@@ -559,7 +556,7 @@ public class TopologyUI extends UI implements CommandUpdateListener, MenuItemUpd
 			if(contextItem.hasChildren()) {
 				updateContextMenuItems(target, contextItem.getChildren());
 			} else {
-				m_commandManager.updateContextMenuItem(target, contextItem, m_graphContainer, this);
+				m_commandManager.updateContextMenuItem(m_applicationContext, target, contextItem, m_graphContainer, this);
 			}
 		}
 	}
@@ -570,7 +567,7 @@ public class TopologyUI extends UI implements CommandUpdateListener, MenuItemUpd
 			if(menuItem.hasChildren()) {
 				updateMenuItems(menuItem.getChildren());
 			}else {
-				m_commandManager.updateMenuItem(menuItem, m_graphContainer, this);
+				m_commandManager.updateMenuItem(m_applicationContext, menuItem, m_graphContainer, this);
 			}
 		}
 	}
@@ -585,12 +582,12 @@ public class TopologyUI extends UI implements CommandUpdateListener, MenuItemUpd
 			m_contextMenu.detach();
 		}
 
-		m_menuBar = commandManager.getMenuBar(m_graphContainer, this);
+		m_menuBar = commandManager.getMenuBar(m_applicationContext, m_graphContainer, this);
 		m_menuBar.setWidth(100, Unit.PERCENTAGE);
 		// Set expand ratio so that extra space is not allocated to this vertical component
 		m_rootLayout.addComponent(m_menuBar, 1);
 
-		m_contextMenu = commandManager.getContextMenu(m_graphContainer, this);
+		m_contextMenu = commandManager.getContextMenu(m_applicationContext, m_graphContainer, this);
 		m_contextMenu.setAsContextMenuOf(this);
 		updateMenuItems();
 	}
@@ -676,14 +673,14 @@ public class TopologyUI extends UI implements CommandUpdateListener, MenuItemUpd
     public void uriFragmentChanged(UriFragmentChangedEvent event) {
         m_settingFragment++;
         String fragment = event.getUriFragment();
-        m_historyManager.applyHistory(m_userName, fragment, m_graphContainer);
+        m_historyManager.applyHistory(m_applicationContext.getUsername(), fragment, m_graphContainer);
         m_settingFragment--;
     }
 
 
     private void saveHistory() {
         if (m_settingFragment == 0) {
-            String fragment = m_historyManager.create(m_userName, m_graphContainer);
+            String fragment = m_historyManager.create(m_applicationContext.getUsername(), m_graphContainer);
             Page.getCurrent().setUriFragment(fragment, false);
         }
     }

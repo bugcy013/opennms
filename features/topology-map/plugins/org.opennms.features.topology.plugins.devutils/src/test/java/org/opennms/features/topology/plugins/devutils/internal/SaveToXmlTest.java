@@ -32,6 +32,7 @@ import org.easymock.EasyMock;
 import org.junit.Test;
 import org.opennms.features.topology.api.GraphContainer;
 import org.opennms.features.topology.api.OperationContext;
+import org.opennms.features.topology.api.osgi.VaadinApplicationContext;
 import org.opennms.features.topology.plugins.topo.simple.SimpleGraphProvider;
 
 import com.vaadin.data.Property;
@@ -62,6 +63,11 @@ public class SaveToXmlTest {
 			// TODO Auto-generated method stub
 			return false;
 		}
+
+        @Override
+        public VaadinApplicationContext getApplicationContext() {
+            return null;
+        }
 
 		@Override
 		public DisplayLocation getDisplayLocation() {

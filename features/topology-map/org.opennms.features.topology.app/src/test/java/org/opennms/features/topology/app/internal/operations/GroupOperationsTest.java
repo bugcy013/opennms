@@ -52,6 +52,7 @@ import org.opennms.core.test.MockLogAppender;
 import org.opennms.features.topology.api.GraphContainer;
 import org.opennms.features.topology.api.OperationContext;
 import org.opennms.features.topology.api.SelectionManager;
+import org.opennms.features.topology.api.osgi.VaadinApplicationContext;
 import org.opennms.features.topology.api.topo.Vertex;
 import org.opennms.features.topology.api.topo.VertexRef;
 import org.opennms.features.topology.plugins.topo.simple.SimpleGraphProvider;
@@ -94,6 +95,11 @@ public class GroupOperationsTest {
 		public boolean isChecked() {
 			return false;
 		}
+
+        @Override
+        public VaadinApplicationContext getApplicationContext() {
+            return null;
+        }
 
 		@Override
 		public DisplayLocation getDisplayLocation() {

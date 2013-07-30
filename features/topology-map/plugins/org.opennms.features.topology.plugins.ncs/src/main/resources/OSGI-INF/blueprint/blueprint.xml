@@ -38,7 +38,8 @@ xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
             <bean ref="ncsPathRouteUtil" method="createPath" />
         </route>
     </camelContext>
-    
+
+    <reference id="serviceManager" interface="org.opennms.features.topology.api.osgi.OnmsServiceManager" availability="mandatory"/>
 	<reference id="ncsComponentRepository" interface="org.opennms.netmgt.model.ncs.NCSComponentRepository" availability="mandatory" />
 	<reference id="nodeDao" interface="org.opennms.netmgt.dao.api.NodeDao" availability="mandatory" />
 
@@ -49,7 +50,7 @@ xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
 	</command-bundle>
 	
 	<bean id="ncsCriteriaServiceManager" class="org.opennms.features.topology.plugins.ncs.internal.NCSCriteriaServiceManager">
-	   <property name="bundleContext" ref="blueprintBundleContext" />
+	   <property name="serviceManager" ref="serviceManager" />
 	</bean>
 	
 	<bean id="viewContribution" class="org.opennms.features.topology.plugins.ncs.NCSViewContribution">

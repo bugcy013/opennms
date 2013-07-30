@@ -29,6 +29,7 @@
 package org.opennms.features.topology.api;
 
 import com.vaadin.ui.UI;
+import org.opennms.features.topology.api.osgi.VaadinApplicationContext;
 
 public interface OperationContext {
 	
@@ -38,4 +39,5 @@ public interface OperationContext {
     GraphContainer getGraphContainer();
     DisplayLocation getDisplayLocation();
     boolean isChecked();
+    VaadinApplicationContext getApplicationContext();
 }

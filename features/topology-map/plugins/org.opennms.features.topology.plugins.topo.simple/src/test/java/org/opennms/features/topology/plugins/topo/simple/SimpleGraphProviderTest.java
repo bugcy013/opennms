@@ -28,21 +28,7 @@
 
 package org.opennms.features.topology.plugins.topo.simple;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.io.ByteArrayInputStream;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.xml.bind.JAXB;
-
+import com.vaadin.ui.UI;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
@@ -51,23 +37,18 @@ import org.opennms.core.test.MockLogAppender;
 import org.opennms.features.topology.api.Constants;
 import org.opennms.features.topology.api.GraphContainer;
 import org.opennms.features.topology.api.OperationContext;
-import org.opennms.features.topology.api.topo.AbstractVertex;
-import org.opennms.features.topology.api.topo.AbstractVertexRef;
-import org.opennms.features.topology.api.topo.Edge;
-import org.opennms.features.topology.api.topo.EdgeRef;
-import org.opennms.features.topology.api.topo.GraphProvider;
-import org.opennms.features.topology.api.topo.SimpleLeafVertex;
-import org.opennms.features.topology.api.topo.Vertex;
-import org.opennms.features.topology.api.topo.VertexListener;
-import org.opennms.features.topology.api.topo.VertexProvider;
-import org.opennms.features.topology.api.topo.VertexRef;
-import org.opennms.features.topology.api.topo.WrappedGraph;
-import org.opennms.features.topology.api.topo.WrappedLeafVertex;
-import org.opennms.features.topology.api.topo.WrappedVertex;
+import org.opennms.features.topology.api.osgi.VaadinApplicationContext;
+import org.opennms.features.topology.api.topo.*;
 import org.opennms.features.topology.plugins.topo.simple.internal.operations.AddVertexOperation;
 import org.opennms.features.topology.plugins.topo.simple.internal.operations.RemoveVertexOperation;
 
-import com.vaadin.ui.UI;
+import javax.xml.bind.JAXB;
+import java.io.ByteArrayInputStream;
+import java.net.URI;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.junit.Assert.*;
 
 public class SimpleGraphProviderTest {
 
@@ -92,6 +73,11 @@ public class SimpleGraphProviderTest {
         @Override
         public boolean isChecked() {
             return false;
+        }
+
+        @Override
+        public VaadinApplicationContext getApplicationContext() {
+            return null;
         }
 
         @Override

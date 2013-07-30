@@ -13,9 +13,8 @@ public class HideNCSPathOperation implements Operation {
     
     @Override
     public Undoer execute(List<VertexRef> targets, OperationContext operationContext) {
-        String sessionId = operationContext.getGraphContainer().getSessionId();
-        if(m_serviceManager.isCriteriaRegistered("ncsPath", sessionId)) {
-            m_serviceManager.unregisterCriteria("ncsPath", sessionId);
+        if(m_serviceManager.isCriteriaRegistered(operationContext.getApplicationContext(), "ncsPath")) {
+            m_serviceManager.unregisterCriteria(operationContext.getApplicationContext(), "ncsPath");
         }
         
         
@@ -24,8 +23,7 @@ public class HideNCSPathOperation implements Operation {
 
     @Override
     public boolean display(List<VertexRef> targets, OperationContext operationContext) {
-        String sessionId = operationContext.getGraphContainer().getSessionId();
-        if(m_serviceManager.isCriteriaRegistered("ncsPath", sessionId)) {
+        if(m_serviceManager.isCriteriaRegistered(operationContext.getApplicationContext(), "ncsPath")) {
             return true;
         }
         
@@ -34,8 +32,7 @@ public class HideNCSPathOperation implements Operation {
 
     @Override
     public boolean enabled(List<VertexRef> targets, OperationContext operationContext) {
-        String sessionId = operationContext.getGraphContainer().getSessionId();
-        if(m_serviceManager.isCriteriaRegistered("ncsPath", sessionId)) {
+        if(m_serviceManager.isCriteriaRegistered(operationContext.getApplicationContext(), "ncsPath")) {
             return true;
         }
         return false;

@@ -29,6 +29,7 @@
 package org.opennms.features.topology.api.osgi;
 
 
+import org.opennms.features.topology.api.topo.Criteria;
 import org.ops4j.pax.vaadin.SessionListener;
 import org.osgi.framework.BundleContext;
 
@@ -90,4 +91,6 @@ public interface OnmsServiceManager extends SessionListener {
     VaadinApplicationContext createApplicationContext(VaadinApplicationContextCreator creator);
 
     EventRegistry getEventRegistry();
+
+    <T> void unregister(Class<T> clazz, VaadinApplicationContext applicationContext, Properties additionalProperties);
 }

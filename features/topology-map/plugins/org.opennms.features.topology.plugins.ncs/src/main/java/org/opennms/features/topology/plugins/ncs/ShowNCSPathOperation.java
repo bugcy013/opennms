@@ -1,11 +1,11 @@
 package org.opennms.features.topology.plugins.ncs;
 
-import java.net.ConnectException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import com.vaadin.data.Item;
+import com.vaadin.data.util.ObjectProperty;
+import com.vaadin.data.util.PropertysetItem;
+import com.vaadin.ui.*;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 import org.apache.camel.component.http.HttpOperationFailedException;
 import org.opennms.features.topology.api.Operation;
 import org.opennms.features.topology.api.OperationContext;
@@ -22,20 +22,11 @@ import org.opennms.netmgt.model.ncs.NCSComponent;
 import org.opennms.netmgt.model.ncs.NCSComponentRepository;
 import org.slf4j.LoggerFactory;
 
-import com.vaadin.data.Item;
-import com.vaadin.data.util.ObjectProperty;
-import com.vaadin.data.util.PropertysetItem;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.Field;
-import com.vaadin.ui.Form;
-import com.vaadin.ui.FormFieldFactory;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Select;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.Window;
+import java.net.ConnectException;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class ShowNCSPathOperation implements Operation {
     
@@ -129,7 +120,7 @@ public class ShowNCSPathOperation implements Operation {
                     
                     if(path.getStatusCode() == 200) {
                         NCSServicePathCriteria criteria = new NCSServicePathCriteria(path.getEdges());
-                        m_serviceManager.registerCriteria(criteria, operationContext.getGraphContainer().getSessionId());
+                        m_serviceManager.registerCriteria(operationContext.getApplicationContext(), criteria);
                     
                         //Select only the vertices in the path
                         selectionManager.setSelectedVertexRefs(path.getVertices());

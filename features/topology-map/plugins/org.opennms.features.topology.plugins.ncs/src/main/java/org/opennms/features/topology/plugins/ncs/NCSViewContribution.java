@@ -1,10 +1,11 @@
 package org.opennms.features.topology.plugins.ncs;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-
+import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.Property.ValueChangeListener;
+import com.vaadin.server.Resource;
+import com.vaadin.ui.AbstractSelect.ItemCaptionMode;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.Tree;
 import org.opennms.features.topology.api.IViewContribution;
 import org.opennms.features.topology.api.SelectionManager;
 import org.opennms.features.topology.api.WidgetContext;
@@ -15,15 +16,11 @@ import org.opennms.features.topology.api.topo.Edge;
 import org.opennms.features.topology.api.topo.VertexRef;
 import org.opennms.features.topology.plugins.ncs.internal.NCSCriteriaServiceManager;
 import org.opennms.netmgt.model.ncs.NCSComponentRepository;
-import org.osgi.framework.ServiceEvent;
-import org.osgi.framework.ServiceListener;
 
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Property.ValueChangeListener;
-import com.vaadin.server.Resource;
-import com.vaadin.ui.AbstractSelect.ItemCaptionMode;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.Tree;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 
 public class NCSViewContribution implements IViewContribution {
 	
@@ -49,7 +46,6 @@ public class NCSViewContribution implements IViewContribution {
 			
 			public void valueChange(ValueChangeEvent event) {
 				Collection<Long> selectedIds = new HashSet<Long>( (Collection<Long>) event.getProperty().getValue() );
-				
 				Collection<Long> nonSelectableIds = new ArrayList<Long>();
 				
 				for(Long id : selectedIds) {
@@ -65,27 +61,13 @@ public class NCSViewContribution implements IViewContribution {
 				
 				Criteria criteria = NCSEdgeProvider.createCriteria(selectedIds);
 				
-				m_serviceManager.registerCriteria(criteria, widgetContext.getGraphContainer().getSessionId());
-                if(m_serviceManager.isCriteriaRegistered("ncsPath", widgetContext.getGraphContainer().getSessionId())) {
-                    m_serviceManager.unregisterCriteria("ncsPath", widgetContext.getGraphContainer().getSessionId());
+				m_serviceManager.registerCriteria(applicationContext, criteria);
+                if(m_serviceManager.isCriteriaRegistered(applicationContext, "ncsPath")) {
+                    m_serviceManager.unregisterCriteria(applicationContext, "ncsPath");
                 }
 				selectVerticesForEdge(criteria, widgetContext.getGraphContainer().getSelectionManager());
 			}
 		});
-		
-		
-		
-		m_serviceManager.addCriteriaServiceListener(new ServiceListener() {
-
-            @Override
-            public void serviceChanged(ServiceEvent event) {
-                if(event.getType() == ServiceEvent.UNREGISTERING) {
-                    //tree.setValue( tree.getNullSelectionItemId() );
-                }
-            }
-            
-		}, widgetContext.getGraphContainer().getSessionId(), "ncs");
-		
 		return tree;
 	}
 

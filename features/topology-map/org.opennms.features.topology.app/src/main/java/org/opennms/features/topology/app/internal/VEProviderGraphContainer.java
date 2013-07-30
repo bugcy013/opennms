@@ -488,27 +488,6 @@ public class VEProviderGraphContainer implements GraphContainer, VertexListener,
         return m_statusProvider;
     }
 
-	@Override
-	public String getUserName() {
-		return m_userName;
-	}
-
-	@Override
-	public void setUserName(String userName) {
-		m_userName = userName;
-	}
-
-    @Override
-    public String getSessionId() {
-        return m_sessionId;
-    }
-    
-    public void setSessionId(String sessionId) {
-        m_sessionId = sessionId;
-        buildServiceChangedEventHandlers();
-        registerServiceListener();
-    }
-
     private void buildServiceChangedEventHandlers() {
         serviceChangedEventHandlers.clear();
         serviceChangedEventHandlers.put(Criteria.class, new ServiceChangedEventHandler<Criteria>() {

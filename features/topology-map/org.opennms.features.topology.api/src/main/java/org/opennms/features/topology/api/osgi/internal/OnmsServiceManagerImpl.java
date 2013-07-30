@@ -73,6 +73,16 @@ public class OnmsServiceManagerImpl implements OnmsServiceManager {
     }
 
     @Override
+    public <T> void unregister(Class<T> clazz, VaadinApplicationContext applicationContext, Properties additionalProperties) {
+        for (T eachService : getServices(clazz, applicationContext, additionalProperties)) {
+            ServiceRegistration<T> eachRegistration = serviceRegistrations.get(eachService);
+            if (eachRegistration == null) continue;
+            serviceRegistrations.get(eachService).unregister();
+            serviceRegistrations.remove(eachService);
+        }
+    }
+
+    @Override
     public <T> T getService(Class<T> clazz, VaadinApplicationContext applicationContext) {
         List<T> services = getServices(clazz, applicationContext, new Properties());
         if (services.isEmpty()) return null;

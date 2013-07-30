@@ -28,20 +28,15 @@
 
 package org.opennms.features.topology.app.internal;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
-
+import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.MenuBar.MenuItem;
+import com.vaadin.ui.UI;
 import org.opennms.features.topology.api.CheckedOperation;
 import org.opennms.features.topology.api.GraphContainer;
 import org.opennms.features.topology.api.Operation;
 import org.opennms.features.topology.api.OperationContext;
 import org.opennms.features.topology.api.OperationContext.DisplayLocation;
+import org.opennms.features.topology.api.osgi.VaadinApplicationContext;
 import org.opennms.features.topology.api.topo.VertexRef;
 import org.opennms.features.topology.app.internal.TopoContextMenu.TopoContextMenuItem;
 import org.slf4j.LoggerFactory;
@@ -49,9 +44,8 @@ import org.vaadin.peter.contextmenu.ContextMenu;
 import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItem;
 import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItemClickEvent;
 
-import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.MenuBar.MenuItem;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class CommandManager {
 
@@ -61,8 +55,11 @@ public class CommandManager {
 
         private final GraphContainer m_graphContainer;
         private final DisplayLocation m_displayLocation;
+        private final VaadinApplicationContext m_applicationContext;
+
         private boolean m_checked = false;
-		public DefaultOperationContext(UI mainWindow, GraphContainer graphContainer, DisplayLocation displayLocation) {
+		public DefaultOperationContext(VaadinApplicationContext applicationContext, UI mainWindow, GraphContainer graphContainer, DisplayLocation displayLocation) {
+            m_applicationContext = applicationContext;
 			m_mainWindow = mainWindow;
 			m_graphContainer = graphContainer;
 			m_displayLocation = displayLocation;
@@ -92,7 +89,12 @@ public class CommandManager {
 			return m_checked;
 		}
 
-	}
+        @Override
+        public VaadinApplicationContext getApplicationContext() {
+            return m_applicationContext;
+        }
+
+    }
 
 	private class ContextMenuListener implements ContextMenu.ContextMenuItemClickListener {
 
@@ -154,8 +156,8 @@ public class CommandManager {
 		m_menuItemUpdateListeners.remove(listener);
 	}
 
-	MenuBar getMenuBar(GraphContainer graphContainer, UI mainWindow) {
-		OperationContext opContext = new DefaultOperationContext(mainWindow, graphContainer, DisplayLocation.MENUBAR);
+	MenuBar getMenuBar(VaadinApplicationContext applicationContext, GraphContainer graphContainer, UI mainWindow) {
+		OperationContext opContext = new DefaultOperationContext(applicationContext, mainWindow, graphContainer, DisplayLocation.MENUBAR);
 		MenuBarBuilder menuBarBuilder = new MenuBarBuilder();
 		menuBarBuilder.setTopLevelMenuOrder(m_topLevelMenuOrder);
 		menuBarBuilder.setSubMenuGroupOder(m_subMenuGroupOrder);
@@ -176,8 +178,8 @@ public class CommandManager {
 	 * @param mainWindow
 	 * @return
 	 */
-	public TopoContextMenu getContextMenu(GraphContainer graphContainer, UI mainWindow) {
-		OperationContext opContext = new DefaultOperationContext(mainWindow, graphContainer, DisplayLocation.CONTEXTMENU);
+	public TopoContextMenu getContextMenu(VaadinApplicationContext applicationContext, GraphContainer graphContainer, UI mainWindow) {
+		OperationContext opContext = new DefaultOperationContext(applicationContext, mainWindow, graphContainer, DisplayLocation.CONTEXTMENU);
 		ContextMenuBuilder contextMenuBuilder = new ContextMenuBuilder();
 		Map<String, Operation> operationMap = new HashMap<String, Operation>();
 		for (Command command : m_commandList) {
@@ -322,8 +324,8 @@ public class CommandManager {
 		return m_subMenuGroupOrder;
 	}
 
-	public void updateMenuItem(MenuItem menuItem, GraphContainer graphContainer, UI mainWindow) {
-		DefaultOperationContext operationContext = new DefaultOperationContext(mainWindow, graphContainer, DisplayLocation.MENUBAR);
+	public void updateMenuItem(VaadinApplicationContext applicationContext, MenuItem menuItem, GraphContainer graphContainer, UI mainWindow) {
+		DefaultOperationContext operationContext = new DefaultOperationContext(applicationContext, mainWindow, graphContainer, DisplayLocation.MENUBAR);
 		Operation operation = getOperationByMenuItemCommand(menuItem.getCommand());
 		
 		//Check for null because separators have no Operation
@@ -344,8 +346,8 @@ public class CommandManager {
 		}
 	}
 
-    public void updateContextMenuItem(Object target, TopoContextMenuItem contextItem, GraphContainer graphContainer, UI mainWindow) {
-        DefaultOperationContext operationContext = new DefaultOperationContext(mainWindow, graphContainer, DisplayLocation.CONTEXTMENU);
+    public void updateContextMenuItem(VaadinApplicationContext applicationContext, Object target, TopoContextMenuItem contextItem, GraphContainer graphContainer, UI mainWindow) {
+        DefaultOperationContext operationContext = new DefaultOperationContext(applicationContext, mainWindow, graphContainer, DisplayLocation.CONTEXTMENU);
         
         ContextMenuItem ctxMenuItem = contextItem.getItem();
         Operation operation = m_contextMenuItemsToOperationMap.get(ctxMenuItem);

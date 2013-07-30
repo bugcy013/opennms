@@ -42,6 +42,7 @@ import org.junit.Test;
 import org.opennms.core.test.MockLogAppender;
 import org.opennms.features.topology.api.GraphContainer;
 import org.opennms.features.topology.api.OperationContext;
+import org.opennms.features.topology.api.osgi.VaadinApplicationContext;
 import org.opennms.features.topology.api.topo.Edge;
 import org.opennms.features.topology.api.topo.GraphProvider;
 import org.opennms.features.topology.api.topo.SimpleLeafVertex;
@@ -77,7 +78,12 @@ public class ConnectOperationTest {
             return false;
         }
 
-		@Override
+        @Override
+        public VaadinApplicationContext getApplicationContext() {
+            return null;
+        }
+
+        @Override
 		public DisplayLocation getDisplayLocation() {
 			return DisplayLocation.MENUBAR;
 		}
