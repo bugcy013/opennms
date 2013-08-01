@@ -51,11 +51,13 @@ import org.opennms.features.topology.api.osgi.OnmsServiceManager;
 import org.opennms.features.topology.api.osgi.VaadinApplicationContext;
 import org.opennms.features.topology.api.osgi.VaadinApplicationContextCreator;
 import org.opennms.features.topology.api.osgi.VaadinApplicationContextImpl;
+import org.opennms.features.topology.api.osgi.locator.OnmsServiceManagerLocator;
 import org.opennms.features.topology.app.internal.TopoContextMenu.TopoContextMenuItem;
 import org.opennms.features.topology.app.internal.TopologyComponent.VertexUpdateListener;
 import org.opennms.features.topology.app.internal.jung.FRLayoutAlgorithm;
 import org.opennms.features.topology.app.internal.support.IconRepositoryManager;
 import org.opennms.web.api.OnmsHeaderProvider;
+import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -131,16 +133,16 @@ public class TopologyUI extends UI implements CommandUpdateListener, MenuItemUpd
         m_applicationContext = serviceManager.createApplicationContext(new VaadinApplicationContextCreator() {
             @Override
             public VaadinApplicationContext create(OnmsServiceManager manager) {
-                VaadinApplicationContextImpl context = new VaadinApplicationContextImpl(manager);
+                VaadinApplicationContextImpl context = new VaadinApplicationContextImpl();
                 context.setSessionId(request.getWrappedSession().getId());
                 context.setUiId(getUIId());
                 context.setUsername(request.getRemoteUser());
                 return context;
             }
         });
-        m_verticesUpdateManager = new OsgiVerticesUpdateManager(m_applicationContext);
+        m_verticesUpdateManager = new OsgiVerticesUpdateManager(serviceManager, m_applicationContext);
 
-        loadUserSettings(request);
+        loadUserSettings();
         setupListeners();
         createLayouts();
         setupErrorHandler();
@@ -150,6 +152,9 @@ public class TopologyUI extends UI implements CommandUpdateListener, MenuItemUpd
         m_selectionManager.addSelectionListener(m_verticesUpdateManager);
         m_verticesUpdateManager.selectionChanged(m_selectionManager);
         m_verticesUpdateManager.graphChanged(m_graphContainer);
+
+        // notify listeners, that ui initialization is finished
+        m_graphContainer.vaadinUiInitialized(m_applicationContext); //we currently only have one listener!
     }
 
     private void setupListeners() {
@@ -172,7 +177,7 @@ public class TopologyUI extends UI implements CommandUpdateListener, MenuItemUpd
     }
 
     private void setupErrorHandler() {
-        UI.getCurrent().setErrorHandler(new DefaultErrorHandler(){
+        UI.getCurrent().setErrorHandler(new DefaultErrorHandler() {
 
             @Override
             public void error(com.vaadin.server.ErrorEvent event) {
@@ -184,7 +189,7 @@ public class TopologyUI extends UI implements CommandUpdateListener, MenuItemUpd
     }
 
     private void addHeader() {
-        if (m_headerHtml != null) {
+        if (m_headerHtml != null && m_showHeader) {
             InputStream is = null;
             try {
                 is = new ByteArrayInputStream(m_headerHtml.getBytes());
@@ -336,8 +341,7 @@ public class TopologyUI extends UI implements CommandUpdateListener, MenuItemUpd
 
     }
 
-    private void loadUserSettings(VaadinRequest request) {
-
+    private void loadUserSettings() {
         // See if the history manager has an existing fragment stored for
         // this user. Do this before laying out the UI because the history
         // may change during layout.
@@ -734,8 +738,8 @@ public class TopologyUI extends UI implements CommandUpdateListener, MenuItemUpd
         super.detach();    //To change body of overridden methods use File | Settings | File Templates.
     }
 
-    public void setServiceManager(OnmsServiceManager serviceManager) {
-        this.serviceManager = serviceManager;
+    public void setServiceManager(BundleContext bundleContext) {
+        this.serviceManager = new OnmsServiceManagerLocator().lookup(bundleContext);
     }
 
     public VaadinApplicationContext getApplicationContext() {

@@ -37,7 +37,7 @@ import org.opennms.features.topology.api.topo.VertexRef;
 
 import com.vaadin.data.Property;
 
-public interface GraphContainer extends DisplayState {
+public interface GraphContainer extends DisplayState, VaadinUiInitializedListener {
 
 	public interface ChangeListener {
 		public void graphChanged(GraphContainer graphContainer);

@@ -50,7 +50,7 @@ xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
 	</command-bundle>
 	
 	<bean id="ncsCriteriaServiceManager" class="org.opennms.features.topology.plugins.ncs.internal.NCSCriteriaServiceManager">
-	   <property name="serviceManager" ref="serviceManager" />
+	   <property name="bundleContext" ref="blueprintBundleContext" />
 	</bean>
 	
 	<bean id="viewContribution" class="org.opennms.features.topology.plugins.ncs.NCSViewContribution">

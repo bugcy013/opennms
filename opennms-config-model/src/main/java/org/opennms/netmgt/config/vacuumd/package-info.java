@@ -1,8 +1,8 @@
 /*******************************************************************************
  * This file is part of OpenNMS(R).
  *
- * Copyright (C) 2006-2012 The OpenNMS Group, Inc.
- * OpenNMS(R) is Copyright (C) 1999-2012 The OpenNMS Group, Inc.
+ * Copyright (C) 2013 The OpenNMS Group, Inc.
+ * OpenNMS(R) is Copyright (C) 1999-2013 The OpenNMS Group, Inc.
  *
  * OpenNMS(R) is a registered trademark of The OpenNMS Group, Inc.
  *
@@ -26,14 +26,7 @@
  *     http://www.opennms.com/
  *******************************************************************************/
 
-package org.opennms.netmgt.charts;
+@XmlSchema(namespace = "http://xmlns.opennms.org/xsd/config/vacuumd", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+package org.opennms.netmgt.config.vacuumd;
 
-/**
- * <p>Chart class.</p>
- *
- * @author <a href="david@opennms.org">David Hustace</a>
- * @version $Id: $
- */
-public class Chart {
-
-}
+import javax.xml.bind.annotation.XmlSchema;

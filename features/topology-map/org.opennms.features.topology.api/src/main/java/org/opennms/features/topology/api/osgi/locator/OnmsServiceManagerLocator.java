@@ -1,8 +1,8 @@
 /*******************************************************************************
  * This file is part of OpenNMS(R).
  *
- * Copyright (C) 2006-2012 The OpenNMS Group, Inc.
- * OpenNMS(R) is Copyright (C) 1999-2012 The OpenNMS Group, Inc.
+ * Copyright (C) 2013 The OpenNMS Group, Inc.
+ * OpenNMS(R) is Copyright (C) 1999-2013 The OpenNMS Group, Inc.
  *
  * OpenNMS(R) is a registered trademark of The OpenNMS Group, Inc.
  *
@@ -26,24 +26,14 @@
  *     http://www.opennms.com/
  *******************************************************************************/
 
-package org.opennms.netmgt.charts;
+package org.opennms.features.topology.api.osgi.locator;
 
-import java.awt.Paint;
+import org.opennms.features.topology.api.osgi.OnmsServiceManager;
+import org.osgi.framework.BundleContext;
 
-/**
- * <p>CustomSeriesColors interface.</p>
- *
- * @author <a href="david@opennms.org">David Hustace</a>
- * @version $Id: $
- */
-public interface CustomSeriesColors {
+public class OnmsServiceManagerLocator {
 
-    /**
-     * <p>getPaint</p>
-     *
-     * @param cat a {@link java.lang.Comparable} object.
-     * @return a {@link java.awt.Paint} object.
-     */
-    Paint getPaint(Comparable<?> cat);
-
+    public OnmsServiceManager lookup(BundleContext bundleContext) {
+        return new ServiceLocator().lookup(OnmsServiceManager.class, bundleContext);
+    }
 }
