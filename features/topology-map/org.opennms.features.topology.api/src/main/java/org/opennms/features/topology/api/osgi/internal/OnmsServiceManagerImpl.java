@@ -77,6 +77,7 @@ public class OnmsServiceManagerImpl implements OnmsServiceManager {
         for (T eachService : getServices(clazz, applicationContext, additionalProperties)) {
             ServiceRegistration<T> eachRegistration = serviceRegistrations.get(eachService);
             if (eachRegistration == null) continue;
+            if (serviceRegistrations.get(eachService) == null) continue;  // wrong bundleContext/OnmsServiceManager
             serviceRegistrations.get(eachService).unregister();
             serviceRegistrations.remove(eachService);
         }
@@ -124,6 +125,7 @@ public class OnmsServiceManagerImpl implements OnmsServiceManager {
                 for (ServiceReference eachReference : allServiceReferences) {
                     Object service = bundleContext.getService(eachReference);
                     if (service == null) continue;
+                    if (serviceRegistrations.get(service) == null) continue; // wrong bundleContext/OnmsServiceManager
                     serviceRegistrations.get(service).unregister();
                     serviceRegistrations.remove(service);
                 }
